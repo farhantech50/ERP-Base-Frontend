@@ -7,7 +7,9 @@ import {
 
 import "react-toastify/dist/ReactToastify.css";
 
+import { useEffect } from "react";
 import { useAuthStore } from "../store/authStore";
+import { usePermissionStore } from "../store/permissionStore";
 import Layout from "../layout/Main";
 import PageLoader from "../components/PageLoader";
 import {
@@ -26,6 +28,13 @@ const ProtectedRoute = ({ children }) => {
 
 const AppRoutes = () => {
   const { isLoggedIn, authUser } = useAuthStore();
+  const { fetchMyPermissions } = usePermissionStore();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchMyPermissions();
+    }
+  }, [isLoggedIn, fetchMyPermissions]);
 
   return (
     <Router>

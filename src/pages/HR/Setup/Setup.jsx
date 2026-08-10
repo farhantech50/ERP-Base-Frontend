@@ -13,6 +13,13 @@ const Setup = () => {
       icon: <FaListAlt className="w-10 h-10" />,
       route: "/hr/setup/lookup-management",
     },
+    {
+      title: "Permission Management",
+      description:
+        "Create, edit, and delete granular system permissions.",
+      icon: <FaListAlt className="w-10 h-10" />,
+      route: "/hr/setup/permission-management",
+    },
   ];
 
   return (

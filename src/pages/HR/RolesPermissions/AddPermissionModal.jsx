@@ -21,10 +21,10 @@ const AddPermissionModal = ({
     if (!open) return;
 
     const fetchPermissions = async () => {
-      const res = await getAllPermissions();
+      const res = await getAllPermissions(1, 1000, "");
 
       if (res.success) {
-        setPermissions(res.data || []);
+        setPermissions(res.data?.data || []);
       } else {
         setPermissions([]);
         showToast(res.message, "error");

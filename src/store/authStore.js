@@ -1,5 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { create } from "zustand";
+import { usePermissionStore } from "./permissionStore";
 
 const ACCESS_TOKEN_KEY = import.meta.env.VITE_ACCESS_TOKEN_KEY;
 
@@ -16,7 +17,6 @@ const extractUserFromToken = (token) => {
       roleName: decoded.roleName,
       fullName: decoded.fullName,
       username: decoded.username,
-      permissions: decoded.permissions,
     };
   } catch (error) {
     console.error("Invalid JWT token:", error);
@@ -49,6 +49,7 @@ export const useAuthStore = create((set) => ({
 
   logout: () => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
+    usePermissionStore.getState().clearPermissions();
 
     set({
       authUser: null,

@@ -14,6 +14,7 @@ import Setup from "../pages/HR/Setup/Setup";
 import RolesPermissions from "../pages/HR/RolesPermissions/RolesPermissions";
 import LookupManagement from "../pages/HR/Setup/LookupManagement/LookupManagement";
 import ActiveUsers from "../pages/HR/ActiveUsers/ActiveUsers";
+import PermissionManagement from "../pages/HR/Setup/PermissionManagement/PermissionManagement";
 
 const Empty = () => (
   <div className="p-4 text-gray-500">Module Component Coming Soon...</div>
@@ -40,6 +41,7 @@ export const protectedRoutes = [
   // HR & Admin Routes for Base
   { path: "/hr/setup", element: Setup },
   { path: "/hr/setup/lookup-management", element: LookupManagement },
+  { path: "/hr/setup/permission-management", element: PermissionManagement },
   { path: "/hr/employees", element: Employees },
   { path: "/hr/permissions", element: RolesPermissions },
   { path: "/hr/active-users", element: ActiveUsers },

@@ -22,14 +22,14 @@ const usePermission = () => {
       };
     }
   };
-  const getAllPermissions = async () => {
+  const getAllPermissions = async (page = 1, limit = 10, search = "") => {
     setLoading(true);
     try {
-      const res = await api.get("/api/permissions");
+      const res = await api.get(`/api/permissions?page=${page}&limit=${limit}&search=${encodeURIComponent(search)}`);
       setLoading(false);
       return {
         success: true,
-        data: res.data || [],
+        data: res.data || {},
       };
     } catch (error) {
       setLoading(false);
@@ -100,12 +100,54 @@ const usePermission = () => {
       };
     }
   };
+  const createPermission = async (data) => {
+    setLoading(true);
+    try {
+      const res = await api.post("/api/permissions", data);
+      setLoading(false);
+      return { success: true, data: res.data };
+    } catch (error) {
+      setLoading(false);
+      console.error("POST create permission error:", error);
+      return { success: false, message: error?.response?.data?.error || "Failed to create permission" };
+    }
+  };
+
+  const updatePermission = async (id, data) => {
+    setLoading(true);
+    try {
+      const res = await api.put(`/api/permissions/${id}`, data);
+      setLoading(false);
+      return { success: true, data: res.data };
+    } catch (error) {
+      setLoading(false);
+      console.error("PUT update permission error:", error);
+      return { success: false, message: error?.response?.data?.error || "Failed to update permission" };
+    }
+  };
+
+  const deletePermission = async (id) => {
+    setLoading(true);
+    try {
+      const res = await api.delete(`/api/permissions/${id}`);
+      setLoading(false);
+      return { success: true, message: res.data?.message || "Permission deleted" };
+    } catch (error) {
+      setLoading(false);
+      console.error("DELETE permission error:", error);
+      return { success: false, message: error?.response?.data?.error || "Failed to delete permission" };
+    }
+  };
+
   return {
     getRoles,
     getPermissionsByRole,
     deletePermissionForRole,
     getAllPermissions,
     setRolePermissions,
+    createPermission,
+    updatePermission,
+    deletePermission,
     loading,
   };
 };

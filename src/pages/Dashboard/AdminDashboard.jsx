@@ -36,18 +36,20 @@ import {
 } from "recharts";
 import useDashboard from "../../hooks/useDashboard";
 import { useAuthStore } from "../../store/authStore";
+import { usePermissionStore } from "../../store/permissionStore";
 import DataTableWithoutApiPagination from "../../components/DataTableWithoutApiPagination";
 import { formatDhakaDate } from "../../utils/dateUtils";
 
 const AdminDashboard = () => {
   const { getAdminDashboard, loading } = useDashboard();
   const { authUser } = useAuthStore();
+  const { permissions } = usePermissionStore();
   const [dashboardData, setDashboardData] = useState(null);
 
   const roleName = authUser?.roleName || "";
   const isAdminOrSuper =
     roleName.toLowerCase().includes("admin") ||
-    authUser?.permissions?.includes("SUPER");
+    permissions?.includes("SUPER");
 
   const fetchDashboard = useCallback(async () => {
     if (!isAdminOrSuper) return;

@@ -5,6 +5,7 @@ import useLookUp from "../../../../hooks/useLookup";
 import { useTriggerRefreshStore } from "../../../../store/triggerRefreshStore";
 import { usePaginationStore } from "../../../../store/paginationStore";
 import { useAuthStore } from "../../../../store/authStore";
+import { usePermissionStore } from "../../../../store/permissionStore";
 import showToast from "../../../../utils/toast";
 import CategoryValuesModal from "./CategoryValuesModal";
 import PageLoader from "../../../../components/PageLoader";
@@ -12,6 +13,7 @@ import PageLoader from "../../../../components/PageLoader";
 const LookupManagement = () => {
   const { getLookups, loading } = useLookUp();
   const { authUser } = useAuthStore();
+  const { permissions } = usePermissionStore();
   const { triggerRefresh, setTriggerRefresh } = useTriggerRefreshStore();
   const { search, setSearch } = usePaginationStore();
 
@@ -74,9 +76,8 @@ const LookupManagement = () => {
           <p className="text-gray-500 mt-1">Manage system categories and their values</p>
         </div>
         
-        {(authUser?.permissions?.includes("SUPER") ||
-          authUser?.permissions?.includes("CREATE_LOOKUP") ||
-          authUser?.roleName === "Super Admin") && (
+        {(permissions?.includes("SUPER") ||
+          permissions?.includes("CREATE_LOOKUP")) && (
           <button
             onClick={handleCreateNewLookup}
             className="inline-flex items-center gap-2 rounded-xl bg-button-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-button-primary-hover"

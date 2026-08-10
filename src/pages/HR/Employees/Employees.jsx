@@ -8,6 +8,7 @@ import useEmployee from "../../../hooks/useEmployee";
 import { useAuthStore } from "../../../store/authStore";
 import { usePaginationStore } from "../../../store/paginationStore";
 import { useTriggerRefreshStore } from "../../../store/triggerRefreshStore";
+import { usePermissionStore } from "../../../store/permissionStore";
 import showToast from "../../../utils/toast";
 import CreateEmployeeModal from "./CreateEmployeeModal";
 import ViewEmployeeModal from "./ViewEmployeeModal";
@@ -19,6 +20,7 @@ const Employees = () => {
   const { page, limit, search, setTotalData } = usePaginationStore();
   const { triggerRefresh } = useTriggerRefreshStore();
   const { authUser } = useAuthStore();
+  const { permissions } = usePermissionStore();
   const [selectedRoleId, setSelectedRoleId] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [roles, setRoles] = useState([]);
@@ -100,9 +102,8 @@ const Employees = () => {
     {
       show: () => {
         return Boolean(
-          authUser?.permissions?.includes("SUPER") ||
-          authUser?.permissions?.includes("UPDATE_USER") ||
-          authUser?.roleName === "Super Admin"
+          permissions?.includes("SUPER") ||
+          permissions?.includes("UPDATE_USER")
         );
       },
       icon: <FaEdit className="text-blue-500 w-5 h-5" />,
@@ -112,9 +113,8 @@ const Employees = () => {
     {
       show: () => {
         return Boolean(
-          authUser?.permissions?.includes("SUPER") ||
-          authUser?.permissions?.includes("VIEW_USER") ||
-          authUser?.roleName === "Super Admin"
+          permissions?.includes("SUPER") ||
+          permissions?.includes("VIEW_USER")
         );
       },
       icon: <FaEye className="text-lime-500 w-5 h-5" />,
@@ -124,9 +124,8 @@ const Employees = () => {
     {
       show: () => {
         return Boolean(
-          authUser?.permissions?.includes("SUPER") ||
-          authUser?.permissions?.includes("DELETE_USER") ||
-          authUser?.roleName === "Super Admin"
+          permissions?.includes("SUPER") ||
+          permissions?.includes("DELETE_USER")
         );
       },
       icon: <FaTrash className="text-red-500 w-5 h-5" />,
@@ -152,9 +151,8 @@ const Employees = () => {
           />
         </div>
 
-        {(authUser?.permissions?.includes("SUPER") ||
-          authUser?.permissions?.includes("CREATE_USER") ||
-          authUser?.roleName === "Super Admin") && (
+        {(permissions?.includes("SUPER") ||
+          permissions?.includes("CREATE_USER")) && (
           <button
             type="button"
             onClick={() => {

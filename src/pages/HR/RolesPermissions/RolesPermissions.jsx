@@ -163,19 +163,7 @@ const RolesPermissions = () => {
                   >
                     <button
                       type="button"
-                      onClick={async () => {
-                        const res = await deleteRolePermission(permission.id);
-
-                        if (res.success) {
-                          setSelectedRolePermissions((prev) =>
-                            prev.filter((p) => p.id !== permission.id),
-                          );
-
-                          showToast(res.message, "success");
-                        } else {
-                          showToast(res.message, "error");
-                        }
-                      }}
+                      onClick={() => deleteRolePermission(permission.id)}
                       className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full text-red-500 transition hover:bg-red-100 hover:text-red-700"
                     >
                       <LuCircleX size={18} />
