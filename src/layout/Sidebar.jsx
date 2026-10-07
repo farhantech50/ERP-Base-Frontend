@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa6";
 import { HiOutlineMenu } from "react-icons/hi";
 import { useAuthStore } from "../store/authStore";
+import { usePermissionStore } from "../store/permissionStore";
 import menuConfig from "../config/menuConfig";
 import { useMediaQuery } from "../utils/useMediaQuery.js";
 
@@ -19,14 +20,24 @@ const Sidebar = () => {
     setSubMenus((prev) => ({ [key]: !prev[key] }));
   };
 
-  const userRole = authUser?.roleName;
+  const { permissions } = usePermissionStore();
 
   const filteredMenus = menuConfig
-    .filter((menu) => menu.roles.includes(userRole))
-    .map((menu) => ({
-      ...menu,
-      subMenu: menu.subMenu.filter((sub) => sub.roles.includes(userRole)),
-    }));
+    .map((menu) => {
+      const filteredSubMenu = menu.subMenu.filter(
+        (sub) => permissions.includes(sub.permission) || permissions.includes("SUPER")
+      );
+      return {
+        ...menu,
+        subMenu: filteredSubMenu,
+      };
+    })
+    .filter(
+      (menu) =>
+        permissions.includes(menu.permission) ||
+        permissions.includes("SUPER") ||
+        (menu.subMenu && menu.subMenu.length > 0)
+    );
   const isMenuActive = (menu) =>
     location.pathname === menu.path ||
     menu.subMenu?.some((sub) => sub.path === location.pathname);

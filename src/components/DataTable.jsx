@@ -27,10 +27,15 @@ const DataTable = ({
     Pending: "bg-amber-50 text-amber-700 border border-amber-200",
     Approved: "bg-emerald-50 text-emerald-700 border border-emerald-200",
     Completed: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+    COMPLETED: "bg-emerald-50 text-emerald-700 border border-emerald-200",
     Confirmed: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+    CONFIRMED: "bg-emerald-50 text-emerald-700 border border-emerald-200",
     Paid: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+    PAID: "bg-emerald-50 text-emerald-700 border border-emerald-200",
     Unpaid: "bg-rose-50 text-rose-700 border border-rose-200",
+    UNPAID: "bg-rose-50 text-rose-700 border border-rose-200",
     Partial: "bg-amber-50 text-amber-700 border border-amber-200",
+    PARTIAL: "bg-amber-50 text-amber-700 border border-amber-200",
     "Partially Paid": "bg-amber-50 text-amber-700 border border-amber-200",
     Rejected: "bg-rose-50 text-rose-700 border border-rose-200",
     Active: "bg-green-50 text-green-700 border border-green-200",
@@ -39,6 +44,8 @@ const DataTable = ({
     "Out of Stock": "bg-rose-50 text-rose-700 border border-rose-200",
     Expired: "bg-rose-50 text-rose-700 border border-rose-200",
     Ordered: "bg-blue-50 text-blue-700 border border-blue-200",
+    DRAFT: "bg-zinc-100 text-zinc-600 border border-zinc-200",
+    CANCELLED: "bg-rose-50 text-rose-700 border border-rose-200",
     "Fully Delivered":
       "bg-emerald-50 text-emerald-700 border border-emerald-200",
     "Partially Delivered": "bg-amber-50 text-amber-700 border border-amber-200",
@@ -53,8 +60,8 @@ const DataTable = ({
 
   return (
     <div className="w-full rounded-xl border border-table-border bg-table-bg shadow-sm">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] items-center gap-4 p-4 bg-primary-500 text-white rounded-t-xl">
-        <div className="flex items-center gap-2 justify-start">
+      <div className="flex items-center justify-between gap-4 p-4 bg-primary-500 text-white rounded-t-xl">
+        <div className="flex items-center gap-2">
           <span className="text-sm text-white/80">Show</span>
 
           <select
@@ -73,23 +80,6 @@ const DataTable = ({
           </select>
 
           <span className="text-sm text-white/80">entries</span>
-        </div>
-
-        <h2 className="text-lg font-semibold uppercase tracking-wide text-center whitespace-nowrap">
-          {headerConfig.title}
-        </h2>
-
-        <div className="flex justify-start lg:justify-end">
-          <input
-            type="text"
-            placeholder={headerConfig.searchPlaceholder}
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            className="w-full lg:w-[420px] rounded-lg border border-input-border bg-input-bg px-4 py-2 text-input-text placeholder-input-placeholder focus:border-primary-500 focus:ring-2 focus:ring-primary-500"
-          />
         </div>
       </div>
 

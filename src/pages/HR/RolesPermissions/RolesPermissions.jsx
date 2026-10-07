@@ -12,6 +12,7 @@ const RolesPermissions = () => {
     usePermission();
   const { triggerRefresh } = useTriggerRefreshStore();
   const [openPermissionModal, setOpenPermissionModal] = useState(false);
+  const [addPermissionType, setAddPermissionType] = useState("granular");
   const [roles, setRoles] = useState([]);
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedRolePermissions, setSelectedRolePermissions] = useState([]);
@@ -143,56 +144,96 @@ const RolesPermissions = () => {
 
               <p className="text-primary-100 text-sm">Assigned Permissions</p>
             </div>
-
-            <button
-              onClick={() => setOpenPermissionModal(true)}
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-primary-600 shadow transition hover:bg-primary-50"
-            >
-              <FaPlus />
-              Add Permission
-            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-6">
-            {selectedRolePermissions.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                {selectedRolePermissions.map((permission) => (
-                  <div
-                    key={permission.id}
-                    className="relative flex items-center gap-3 rounded-xl border border-primary-100 bg-primary-50 px-4 py-3"
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+              {/* Granular Permissions */}
+              <div>
+                <div className="flex items-center justify-between mb-4 border-b pb-2">
+                  <h3 className="text-lg font-bold text-gray-700">Granular Permissions</h3>
+                  <button
+                    onClick={() => {
+                      setAddPermissionType("granular");
+                      setOpenPermissionModal(true);
+                    }}
+                    className="inline-flex items-center gap-1 rounded-lg bg-primary-50 px-3 py-1.5 text-xs font-semibold text-primary-600 transition hover:bg-primary-100"
                   >
-                    <button
-                      type="button"
-                      onClick={() => deleteRolePermission(permission.id)}
-                      className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full text-red-500 transition hover:bg-red-100 hover:text-red-700"
+                    <FaPlus /> Add
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {selectedRolePermissions.filter(p => p.type !== 'menu').map((permission) => (
+                    <div
+                      key={permission.id}
+                      className="relative flex items-center gap-3 rounded-xl border border-primary-100 bg-primary-50 px-4 py-3"
                     >
-                      <LuCircleX size={18} />
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteRolePermission(permission.id)}
+                        className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full text-red-500 transition hover:bg-red-100 hover:text-red-700"
+                      >
+                        <LuCircleX size={18} />
+                      </button>
 
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-500 text-white">
-                      <FaShieldAlt />
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-500 text-white shrink-0">
+                        <FaShieldAlt />
+                      </div>
+
+                      <span className="font-medium text-text leading-tight text-sm">
+                        {permission.label}
+                      </span>
                     </div>
-
-                    <span className="font-medium text-text">
-                      {permission.label}
-                    </span>
-                  </div>
-                ))}
+                  ))}
+                  {selectedRolePermissions.filter(p => p.type !== 'menu').length === 0 && (
+                    <p className="text-gray-500 text-sm italic col-span-2">No granular permissions assigned.</p>
+                  )}
+                </div>
               </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <FaShieldAlt className="mb-4 text-5xl text-primary-200" />
 
-                <h3 className="text-lg font-semibold text-text">
-                  No Permissions Assigned
-                </h3>
+              {/* Menu Permissions */}
+              <div>
+                <div className="flex items-center justify-between mb-4 border-b pb-2">
+                  <h3 className="text-lg font-bold text-gray-700">Menu Permissions</h3>
+                  <button
+                    onClick={() => {
+                      setAddPermissionType("menu");
+                      setOpenPermissionModal(true);
+                    }}
+                    className="inline-flex items-center gap-1 rounded-lg bg-purple-50 px-3 py-1.5 text-xs font-semibold text-purple-600 transition hover:bg-purple-100"
+                  >
+                    <FaPlus /> Add
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {selectedRolePermissions.filter(p => p.type === 'menu').map((permission) => (
+                    <div
+                      key={permission.id}
+                      className="relative flex items-center gap-3 rounded-xl border border-purple-200 bg-purple-50 px-4 py-3"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => deleteRolePermission(permission.id)}
+                        className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full text-red-500 transition hover:bg-red-100 hover:text-red-700"
+                      >
+                        <LuCircleX size={18} />
+                      </button>
 
-                <p className="mt-2 text-text-light">
-                  Click the <strong>Add Permission</strong> button to assign
-                  permissions to this role.
-                </p>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500 text-white shrink-0">
+                        <FaShieldAlt />
+                      </div>
+
+                      <span className="font-medium text-text leading-tight text-sm">
+                        {permission.label}
+                      </span>
+                    </div>
+                  ))}
+                  {selectedRolePermissions.filter(p => p.type === 'menu').length === 0 && (
+                    <p className="text-gray-500 text-sm italic col-span-2">No menu permissions assigned.</p>
+                  )}
+                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
@@ -202,6 +243,7 @@ const RolesPermissions = () => {
         selectedRoleId={selectedRole?.id}
         setSelectedRoleId={setSelectedRole}
         selectedRolePermissions={selectedRolePermissions}
+        type={addPermissionType}
       />
     </div>
   );

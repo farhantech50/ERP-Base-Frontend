@@ -14,12 +14,12 @@ const PermissionManagement = () => {
   const { getAllPermissions, createPermission, updatePermission, deletePermission, loading } = usePermission();
   const { authUser } = useAuthStore();
   const { permissions: storePermissions } = usePermissionStore();
-  const { setTotalData, search, page, limit } = usePaginationStore();
+  const { setTotalData, search, page, limit, setSearch, setPage } = usePaginationStore();
   const [permissions, setPermissions] = useState([]);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [formData, setFormData] = useState({ key: "", label: "" });
+  const [formData, setFormData] = useState({ key: "", label: "", type: "granular" });
 
   const fetchPermissions = async () => {
     const res = await getAllPermissions(page, limit, search);
@@ -38,10 +38,10 @@ const PermissionManagement = () => {
   const handleOpenModal = (permission = null) => {
     if (permission) {
       setEditingId(permission.id);
-      setFormData({ key: permission.key, label: permission.label || "" });
+      setFormData({ key: permission.key, label: permission.label || "", type: permission.type || "granular" });
     } else {
       setEditingId(null);
-      setFormData({ key: "", label: "" });
+      setFormData({ key: "", label: "", type: "granular" });
     }
     setIsModalOpen(true);
   };
@@ -49,7 +49,7 @@ const PermissionManagement = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingId(null);
-    setFormData({ key: "", label: "" });
+    setFormData({ key: "", label: "", type: "granular" });
   };
 
   const handleChange = (e) => {
@@ -64,7 +64,7 @@ const PermissionManagement = () => {
     }
 
     const formattedKey = formData.key.trim().toUpperCase().replace(/\s+/g, '_');
-    const dataToSubmit = { key: formattedKey, label: formData.label.trim() };
+    const dataToSubmit = { key: formattedKey, label: formData.label.trim(), type: formData.type };
 
     let res;
     if (editingId) {
@@ -97,17 +97,20 @@ const PermissionManagement = () => {
   const tableHead = [
     "Key",
     "Label",
+    "Type",
     "Action",
   ];
 
   const columnMapping = {
     Key: "key",
     Label: "label",
+    Type: "type",
   };
 
   const columnAlignment = {
     Key: "left",
     Label: "left",
+    Type: "left",
     Action: "center",
   };
 
@@ -138,21 +141,37 @@ const PermissionManagement = () => {
 
   return (
     <div className="flex flex-col gap-4 p-4 w-full">
-      <div className="flex justify-between items-center mb-2">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Permission Management</h1>
           <p className="text-sm text-gray-500">Create and manage application permissions.</p>
         </div>
-        {(storePermissions?.includes("SUPER") ||
-          storePermissions?.includes("CREATE_PERMISSION")) && (
-          <button
-            onClick={() => handleOpenModal()}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-button-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:bg-button-primary-hover hover:shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-300"
-          >
-            <MdAddCircle className="w-5 h-5" />
-            Add Permission
-          </button>
-        )}
+        
+        <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
+          <div className="w-full md:w-80">
+            <input
+              type="text"
+              value={search || ""}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Search Permissions..."
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
+          </div>
+
+          {(storePermissions?.includes("SUPER") ||
+            storePermissions?.includes("CREATE_PERMISSION")) && (
+            <button
+              onClick={() => handleOpenModal()}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-button-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:bg-button-primary-hover hover:shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-300 whitespace-nowrap w-full md:w-auto"
+            >
+              <MdAddCircle className="w-5 h-5" />
+              Add Permission
+            </button>
+          )}
+        </div>
       </div>
 
       <DataTable
@@ -203,6 +222,21 @@ const PermissionManagement = () => {
               placeholder="e.g. Can create invoices"
               className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Permission Type <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 transition"
+              required
+            >
+              <option value="granular">Granular</option>
+              <option value="menu">Menu</option>
+            </select>
           </div>
           <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
             <button

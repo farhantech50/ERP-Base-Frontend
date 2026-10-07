@@ -17,7 +17,7 @@ const Employees = () => {
   const { getEmployees, getEmployeeById, loading } =
     useEmployee();
 
-  const { page, limit, search, setTotalData } = usePaginationStore();
+  const { page, limit, search, setTotalData, setSearch, setPage } = usePaginationStore();
   const { triggerRefresh } = useTriggerRefreshStore();
   const { authUser } = useAuthStore();
   const { permissions } = usePermissionStore();
@@ -137,18 +137,37 @@ const Employees = () => {
   return (
     <div className="flex flex-col gap-4 p-4 w-full">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="w-full md:w-72">
-          <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary-700">
-            <FaUserShield className="text-primary-500" />
-            Select Roles
-          </label>
+        <div className="flex flex-col gap-4 md:flex-row md:items-end w-full">
+          <div className="w-full md:w-72">
+            <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary-700">
+              <FaUserShield className="text-primary-500" />
+              Select Roles
+            </label>
 
-          <Lookup
-            lookupName="role"
-            selectedId={selectedRoleId}
-            setSelectedId={setSelectedRoleId}
-            isMultiple={true}
-          />
+            <Lookup
+              lookupName="role"
+              selectedId={selectedRoleId}
+              setSelectedId={setSelectedRoleId}
+              isMultiple={true}
+            />
+          </div>
+
+          <div className="w-full md:w-96">
+            <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary-700">
+              <span className="text-primary-500">🔍</span>
+              Search
+            </label>
+            <input
+              type="text"
+              value={search || ""}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Search Employee..."
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-800 placeholder-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            />
+          </div>
         </div>
 
         {(permissions?.includes("SUPER") ||
@@ -159,7 +178,7 @@ const Employees = () => {
               setSelectedEmployee(null);
               setOpen(true);
             }}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-button-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:bg-button-primary-hover hover:shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-300"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-button-primary px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:bg-button-primary-hover hover:shadow-lg active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-300 whitespace-nowrap"
           >
             <MdAddCircle className="h-5 w-5" />
             Create Employee

@@ -11,6 +11,7 @@ const AddPermissionModal = ({
   selectedRoleId,
   setSelectedRoleId,
   selectedRolePermissions,
+  type = "granular",
 }) => {
   const { getAllPermissions, setRolePermissions, loading } = usePermission();
   const { setTriggerRefresh } = useTriggerRefreshStore();
@@ -45,13 +46,21 @@ const AddPermissionModal = ({
       (selectedRolePermissions || []).map((p) => p.id),
     );
 
-    return permissions.filter((p) => !assignedIds.has(p.id));
-  }, [permissions, selectedRolePermissions]);
+    return permissions.filter((p) => !assignedIds.has(p.id) && (type === "menu" ? p.type === "menu" : p.type !== "menu"));
+  }, [permissions, selectedRolePermissions, type]);
 
   const togglePermission = (id) => {
     setSelectedPermissions((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
+  };
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedPermissions(availablePermissions.map(p => p.id));
+    } else {
+      setSelectedPermissions([]);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -115,10 +124,25 @@ const AddPermissionModal = ({
     <CustomModal
       open={open}
       setOpen={handleClose}
-      header="Add Permissions"
+      header={`Add ${type === "menu" ? "Menu" : "Granular"} Permissions`}
       width="w-[40vw]"
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {availablePermissions.length > 0 && (
+          <div className="flex items-center gap-3 px-5 py-2 bg-gray-50 rounded-lg border border-gray-200">
+            <input
+              type="checkbox"
+              id="selectAll"
+              checked={selectedPermissions.length === availablePermissions.length && availablePermissions.length > 0}
+              onChange={handleSelectAll}
+              className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+            />
+            <label htmlFor="selectAll" className="font-semibold text-gray-700 cursor-pointer select-none">
+              Select All
+            </label>
+          </div>
+        )}
+
         <div className="max-h-[420px] overflow-y-auto rounded-xl border border-primary-100 divide-y divide-primary-100">
           {availablePermissions.length > 0 ? (
             availablePermissions.map((permission) => (
